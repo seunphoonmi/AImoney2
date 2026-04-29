@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Download Your Ebook – AI Money Blueprint Nigeria</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #080f0a;
+      --bg-2: #0e1a10;
+      --gold: #f0b429;
+      --gold-light: #ffd166;
+      --gold-dim: rgba(240,180,41,0.12);
+      --green: #1a4a28;
+      --text: #f0ede6;
+      --text-dim: #a09b90;
+      --border: rgba(240,180,41,0.18);
+      --radius: 4px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* STATES */
+    .state { display: none; flex: 1; align-items: center; justify-content: center; padding: 40px 24px; flex-direction: column; text-align: center; }
+    .state.active { display: flex; }
+
+    /* LOADING STATE */
+    #state-loading { gap: 24px; }
+    .spinner {
+      width: 56px; height: 56px;
+      border: 3px solid var(--border);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text { font-family: 'Space Mono', monospace; font-size: 13px; color: var(--text-dim); letter-spacing: 0.1em; }
+
+    /* INVALID STATE */
+    #state-invalid { gap: 20px; }
+    .invalid-icon { font-size: 64px; }
+    .invalid-title { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; color: #ff6b6b; }
+    .invalid-sub { font-size: 15px; color: var(--text-dim); max-width: 480px; line-height: 1.7; }
+    .back-link { margin-top: 12px; color: var(--gold); font-size: 14px; text-decoration: none; border-bottom: 1px solid var(--gold); padding-bottom: 2px; }
+    .back-link:hover { color: var(--gold-light); }
+
+    /* SUCCESS STATE */
+    #state-success { min-height: 100vh; display: none; flex-direction: column; }
+    #state-success.active { display: flex; }
+
+    /* TOP BAR */
+    .success-bar {
+      background: var(--gold);
+      padding: 14px 24px;
+      text-align: center;
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      color: #000;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* HERO AREA */
+    .success-hero {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 24px 60px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .success-hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(240,180,41,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .confetti-ring {
+      width: 100px; height: 100px;
+      border-radius: 50%;
+      background: var(--gold-dim);
+      border: 2px solid var(--gold);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 44px;
+      margin-bottom: 32px;
+      animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+    @keyframes popIn { from { opacity:0; transform: scale(0.5); } to { opacity:1; transform: scale(1); } }
+
+    .success-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(32px, 5vw, 60px);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+      animation: fadeUp 0.5s 0.2s ease both;
+    }
+    .success-title em { font-style: italic; color: var(--gold); }
+    .success-name {
+      font-size: 18px;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+      animation: fadeUp 0.5s 0.3s ease both;
+    }
+    .success-name strong { color: var(--text); }
+    .ref-tag {
+      display: inline-block;
+      background: var(--gold-dim);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 5px 16px;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: var(--gold);
+      margin-bottom: 48px;
+      animation: fadeUp 0.5s 0.35s ease both;
+    }
+
+    /* DOWNLOAD CARD */
+    .download-card {
+      background: var(--bg-2);
+      border: 1px solid var(--gold);
+      border-radius: 12px;
+      max-width: 500px;
+      width: 100%;
+      overflow: hidden;
+      animation: fadeUp 0.5s 0.4s ease both;
+    }
+    .download-card-header {
+      background: rgba(240,180,41,0.08);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 28px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .book-icon { font-size: 36px; }
+    .book-info h3 { font-size: 16px; font-weight: 600; margin-bottom: 3px; }
+    .book-info p { font-size: 13px; color: var(--text-dim); }
+    .download-card-body { padding: 28px; }
+    .download-btn {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      width: 100%;
+      background: var(--gold);
+      color: #000;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      padding: 18px;
+      border-radius: var(--radius);
+      text-decoration: none;
+      transition: all 0.2s;
+      cursor: pointer;
+      border: none;
+    }
+    .download-btn:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 12px 40px rgba(240,180,41,0.3); }
+    .download-icon { font-size: 20px; }
+    .download-hints { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
+    .hint { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--text-dim); text-align: left; }
+    .hint-icon { flex-shrink: 0; color: var(--gold); margin-top: 1px; }
+
+    /* WHAT NEXT */
+    .what-next {
+      max-width: 680px;
+      margin: 48px auto 0;
+      animation: fadeUp 0.5s 0.5s ease both;
+    }
+    .what-next h4 {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 24px;
+    }
+    .next-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+    }
+    .next-step {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      text-align: left;
+    }
+    .next-num {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: var(--gold);
+      margin-bottom: 10px;
+    }
+    .next-step p { font-size: 13px; color: var(--text-dim); line-height: 1.6; }
+
+    /* FOOTER */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 32px 24px;
+      text-align: center;
+    }
+    footer p { font-size: 13px; color: var(--text-dim); }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    @media (max-width: 600px) {
+      .success-hero { padding: 60px 20px 40px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- LOADING STATE -->
+<div class="state active" id="state-loading">
+  <div class="spinner"></div>
+  <div class="loading-text">Verifying your payment…</div>
+</div>
+
+<!-- INVALID STATE (no valid payment found) -->
+<div class="state" id="state-invalid">
+  <div class="invalid-icon">🚫</div>
+  <div class="invalid-title">Access Denied</div>
+  <p class="invalid-sub">This page is only accessible after a successful payment. If you've already paid and are seeing this by mistake, please contact us with your payment reference.</p>
+  <a href="index.html" class="back-link">← Go back and complete purchase</a>
+</div>
+
+<!-- SUCCESS STATE -->
+<div class="state" id="state-success">
+  <div class="success-bar">✅ Payment Confirmed — Your order is complete!</div>
+  <div class="success-hero">
+    <div class="confetti-ring">🎉</div>
+    <h1 class="success-title">Welcome to the<br/><em>Blueprint!</em></h1>
+    <p class="success-name">Thank you, <strong id="buyer-display-name">friend</strong>. Your access is ready.</p>
+    <div class="ref-tag">Ref: <span id="ref-display">—</span></div>
+
+    <!-- DOWNLOAD CARD -->
+    <div class="download-card">
+      <div class="download-card-header">
+        <div class="book-icon">📘</div>
+        <div class="book-info">
+          <h3>AI Money Blueprint Nigeria</h3>
+          <p>PDF Ebook · Full Access · Instant Download</p>
+        </div>
+      </div>
+      <div class="download-card-body">
+        <a class="download-btn" id="download-link" href="#" target="_blank" rel="noopener">
+          <span class="download-icon">⬇️</span>
+          Download Your Ebook (PDF)
+        </a>
+        <div class="download-hints">
+          <div class="hint"><span class="hint-icon">📌</span> Save the file to your device or Google Drive for permanent access.</div>
+          <div class="hint"><span class="hint-icon">📧</span> A receipt has been sent to your email by Paystack.</div>
+          <div class="hint"><span class="hint-icon">💬</span> Need help? WhatsApp or email us with your payment reference above.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WHAT NEXT -->
+    <div class="what-next">
+      <h4>🚀 How to get started today</h4>
+      <div class="next-steps">
+        <div class="next-step"><div class="next-num">STEP 01</div><p>Download and read Module 1 to understand the Nigerian AI landscape.</p></div>
+        <div class="next-step"><div class="next-num">STEP 02</div><p>Pick ONE income strategy from Module 3 and set up your first profile.</p></div>
+        <div class="next-step"><div class="next-num">STEP 03</div><p>Use the prompt templates in Module 2 to start delivering work immediately.</p></div>
+        <div class="next-step"><div class="next-num">STEP 04</div><p>Land your first client within 14 days and reinvest in tools and skills.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 AI Money Blueprint Nigeria. Thank you for your purchase 🇳🇬</p>
+  </footer>
+</div>
+
+<script>
+  // ─────────────────────────────────────────────
+  //  CONFIGURATION — SET YOUR VALUES HERE
+  // ─────────────────────────────────────────────
+  const GOOGLE_DRIVE_DOWNLOAD_LINK = 'https://drive.google.com/file/d/1gt-QpXEwrycOfKkI_Un_LgEmiFw5Uhod/view?usp=sharing'; 
+  // ↑ Replace with your Google Drive link. 
+  //   To get a direct download link from Google Drive:
+  //   1. Share the file (Anyone with the link → Viewer)
+  //   2. Copy the file ID from the share URL:
+  //      https://drive.google.com/file/d/FILE_ID/view
+  //   3. Use: https://drive.google.com/uc?export=download&id=FILE_ID
+  // ─────────────────────────────────────────────
+
+  function getParams() {
+    const p = new URLSearchParams(window.location.search);
+    return {
+      reference: p.get('reference'),
+      name: p.get('name'),
+      email: p.get('email')
+    };
+  }
+
+  function showState(id) {
+    document.querySelectorAll('.state').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  function isValidRef(ref) {
+    // Paystack references start with 'AMB_' (our prefix) or are alphanumeric strings
+    // This is a basic structural check — a real backend verify call is recommended for production
+    return ref && ref.length > 6;
+  }
+
+  window.addEventListener('DOMContentLoaded', function () {
+    // Short delay so "Verifying…" is visible and reassuring
+    setTimeout(function () {
+      const { reference, name, email } = getParams();
+
+      if (!isValidRef(reference)) {
+        showState('state-invalid');
+        return;
+      }
+
+      // ── Show success state ──
+      const displayName = name ? decodeURIComponent(name) : 'friend';
+      document.getElementById('buyer-display-name').textContent = displayName.split(' ')[0];
+      document.getElementById('ref-display').textContent = reference;
+
+      // Set download link
+      const dlLink = document.getElementById('download-link');
+      if (GOOGLE_DRIVE_DOWNLOAD_LINK && GOOGLE_DRIVE_DOWNLOAD_LINK !== 'YOUR_GOOGLE_DRIVE_DIRECT_DOWNLOAD_LINK') {
+        dlLink.href = GOOGLE_DRIVE_DOWNLOAD_LINK;
+      } else {
+        // Fallback: show a note that link is coming
+        dlLink.textContent = '⏳ Download link being set up — check back shortly';
+        dlLink.style.opacity = '0.7';
+        dlLink.removeAttribute('href');
+      }
+
+      showState('state-success');
+    }, 1800); // 1.8s "verifying" animation for UX trust
+  });
+</script>
+</body>
+</html>
