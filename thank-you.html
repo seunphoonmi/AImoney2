@@ -289,7 +289,7 @@
   // ─────────────────────────────────────────────
   //  CONFIGURATION — SET YOUR VALUES HERE
   // ─────────────────────────────────────────────
-  const GOOGLE_DRIVE_DOWNLOAD_LINK = 'https://drive.google.com/file/d/1gt-QpXEwrycOfKkI_Un_LgEmiFw5Uhod/view?usp=sharing'; 
+  const GOOGLE_DRIVE_DOWNLOAD_LINK = 'https://drive.google.com/drive/folders/1Oogj74S0OmGegdpHM4upcf-jnnsug4no?usp=drive_link'; 
   // ↑ Replace with your Google Drive link. 
   //   To get a direct download link from Google Drive:
   //   1. Share the file (Anyone with the link → Viewer)
@@ -335,7 +335,7 @@
 
       // Set download link
       const dlLink = document.getElementById('download-link');
-      if (GOOGLE_DRIVE_DOWNLOAD_LINK && GOOGLE_DRIVE_DOWNLOAD_LINK !== 'YOUR_GOOGLE_DRIVE_DIRECT_DOWNLOAD_LINK') {
+      if (GOOGLE_DRIVE_DOWNLOAD_LINK && GOOGLE_DRIVE_DOWNLOAD_LINK !== 'https://drive.google.com/drive/folders/1Oogj74S0OmGegdpHM4upcf-jnnsug4no?usp=drive_link') {
         dlLink.href = GOOGLE_DRIVE_DOWNLOAD_LINK;
       } else {
         // Fallback: show a note that link is coming
