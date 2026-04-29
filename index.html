@@ -446,7 +446,9 @@
       metadata: { custom_fields: [{ display_name: 'Full Name', variable_name: 'full_name', value: name }] },
       callback: function(response) {
         // Redirect to thank-you / download page after successful payment
-        window.location.href = 'thank-you.html?ref=' + response.reference + '&email=' + encodeURIComponent(email);
+        window.location.href = 'thank-you.html?ref=' + response.reference
+          + '&email=' + encodeURIComponent(email)
+          + '&name=' + encodeURIComponent(name);
       },
       onClose: function() {
         // User closed the Paystack popup — do nothing, keep modal open
