@@ -193,6 +193,16 @@
     .modal-submit:hover { background: var(--gold-light); }
     .modal-error { color: #ff6b6b; font-size: 13px; margin-top: 8px; display: none; }
 
+    /* PAYMENT OPTIONS */
+    .payment-divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; }
+    .payment-divider::before, .payment-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .payment-divider span { font-size: 12px; color: var(--text-dim); font-family: 'Space Mono', monospace; letter-spacing: 0.08em; white-space: nowrap; }
+    .btn-whatsapp { width: 100%; background: #25D366; color: #fff; font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 16px; padding: 16px; border: none; border-radius: var(--radius); cursor: pointer; margin-top: 0; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .btn-whatsapp:hover { background: #1ebe5d; transform: translateY(-2px); box-shadow: 0 12px 32px rgba(37,211,102,0.28); }
+    .btn-whatsapp svg { width: 20px; height: 20px; flex-shrink: 0; }
+    .whatsapp-note { text-align: center; margin-top: 12px; font-size: 12px; color: var(--text-dim); }
+    .whatsapp-note span { color: #25D366; }
+
     /* FAQ */
     .faq-list { margin-top: 56px; display: flex; flex-direction: column; }
     .faq-item { border-bottom: 1px solid var(--border); }
@@ -391,74 +401,101 @@
   <p style="margin-top:8px;">Questions? Reach us on WhatsApp or email.</p>
 </footer>
 
-<!-- EMAIL MODAL -->
+<!-- ORDER MODAL -->
 <div class="modal-overlay" id="modal">
   <div class="modal">
-    <button class="modal-close" onclick="closeModal()">×</button>
-    <h2>Almost There! 🎉</h2>
-    <p>Enter your name and email to proceed to secure payment. Your download link will be on the next page.</p>
-    <div class="modal-field"><label>Full Name</label><input type="text" id="buyer-name" placeholder="e.g. Adaeze Okafor" /></div>
-    <div class="modal-field"><label>Email Address</label><input type="email" id="buyer-email" placeholder="e.g. adaeze@gmail.com" /></div>
-    <div class="modal-error" id="modal-error">Please enter a valid name and email address.</div>
-    <button class="modal-submit" onclick="initiatePayment()">Proceed to Pay ₦3,500 →</button>
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <h2>Get the Blueprint 🎉</h2>
+    <p>Enter your details below and choose how you'd like to complete your order.</p>
+
+    <div class="modal-field">
+      <label>Full Name</label>
+      <input type="text" id="buyer-name" placeholder="e.g. Adaeze Okafor" />
+    </div>
+    <div class="modal-field">
+      <label>Email Address</label>
+      <input type="email" id="buyer-email" placeholder="e.g. adaeze@gmail.com" />
+    </div>
+    <div class="modal-error" id="modal-error">Please enter your name and a valid email address.</div>
+
+    <button class="modal-submit" onclick="initiatePayment()" style="margin-top:16px;">Pay ₦3,500 Securely with Paystack →</button>
+    <div class="paystack-note" style="margin-top:10px;"><span class="lock-icon">🔒</span> Card · Bank Transfer · USSD accepted</div>
+
+    <div class="payment-divider"><span>or complete order via</span></div>
+
+    <button class="btn-whatsapp" onclick="orderViaWhatsApp()">
+      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 3C9.373 3 4 8.373 4 15c0 2.385.664 4.61 1.813 6.512L4 29l7.695-1.793A12.94 12.94 0 0016 28c6.627 0 12-5.373 12-12S22.627 3 16 3z" fill="#fff" fill-opacity=".2"/>
+        <path d="M22.003 19.274c-.306-.153-1.809-.893-2.088-.994-.279-.102-.482-.153-.685.153-.203.306-.785.994-.962 1.197-.177.204-.354.23-.66.077-.306-.154-1.291-.476-2.459-1.517-.909-.81-1.522-1.812-1.7-2.118-.178-.306-.019-.47.133-.622.137-.136.306-.356.459-.534.153-.178.204-.306.306-.51.102-.203.051-.382-.026-.535-.077-.153-.685-1.654-.938-2.265-.247-.595-.498-.514-.685-.524l-.584-.01c-.203 0-.534.077-.813.382-.279.306-1.066 1.04-1.066 2.538 0 1.498 1.09 2.945 1.243 3.148.152.204 2.146 3.276 5.2 4.592.727.314 1.295.501 1.738.641.73.232 1.394.199 1.919.12.585-.087 1.809-.74 2.064-1.454.255-.713.255-1.325.178-1.453-.076-.128-.279-.204-.585-.357z" fill="#fff"/>
+      </svg>
+      Order via WhatsApp
+    </button>
+    <div class="whatsapp-note">Chat with us directly · Pay on delivery available · <span>Fast response guaranteed</span></div>
   </div>
 </div>
 <script>
-  // 1. Open the Modal
   function openModal() {
     document.getElementById('modal').classList.add('open');
     document.body.style.overflow = 'hidden';
   }
 
-  // 2. Close the Modal
   function closeModal() {
     document.getElementById('modal').classList.remove('open');
     document.body.style.overflow = 'auto';
   }
 
-  // 3. Initiate Payment
-  function initiatePayment() {
-    const nameField  = document.getElementById('buyer-name');
-    const emailField = document.getElementById('buyer-email');
-    const errorEl    = document.getElementById('modal-error');
-
-    const name  = nameField.value.trim();
-    const email = emailField.value.trim();
-
-    // Validate
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!name || !email || !emailRegex.test(email)) {
-      errorEl.style.display = 'block';
-      if (!name)               errorEl.textContent = 'Please enter your full name.';
-      else if (!email)         errorEl.textContent = 'Please enter your email address.';
-      else                     errorEl.textContent = 'Please enter a valid email address.';
-      return;
+  function validateFields() {
+    const name  = document.getElementById('buyer-name').value.trim();
+    const email = document.getElementById('buyer-email').value.trim();
+    const err   = document.getElementById('modal-error');
+    if (!name || !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      err.style.display = 'block';
+      return null;
     }
+    err.style.display = 'none';
+    return { name, email };
+  }
 
-    // Clear any previous error
-    errorEl.style.display = 'none';
+  function initiatePayment() {
+    const fields = validateFields();
+    if (!fields) return;
 
     const handler = PaystackPop.setup({
       key: 'pk_live_56cd68f5adb0e165c34545bee318900fcd3505e3',
-      email: email,
-      amount: 350000, // ₦3,500 × 100 kobo
+      email: fields.email,
+      amount: 350000,
       currency: 'NGN',
-      metadata: { custom_fields: [{ display_name: 'Full Name', variable_name: 'full_name', value: name }] },
+      metadata: { custom_fields: [{ display_name: 'Full Name', variable_name: 'full_name', value: fields.name }] },
       callback: function(response) {
-        // Redirect to thank-you / download page after successful payment
-        window.location.href = 'thank-you.html?ref=' + response.reference
-          + '&email=' + encodeURIComponent(email)
-          + '&name=' + encodeURIComponent(name);
+        closeModal();
+        window.location.href = 'thank-you.html?ref=' + response.reference;
       },
-      onClose: function() {
-        // User closed the Paystack popup — do nothing, keep modal open
-      }
+      onClose: function() {}
     });
 
     handler.openIframe();
   }
 
-  // Close modal when clicking the dark overlay (outside the modal box)
+  function orderViaWhatsApp() {
+    const name  = document.getElementById('buyer-name').value.trim();
+    const email = document.getElementById('buyer-email').value.trim();
+    const phone = '+2349034993452';
+
+    let msg = 'Hello! I want to order the *AI Money Blueprint Nigeria* (₦3,500).';
+    if (name)  msg += '\n\nName: ' + name;
+    if (email) msg += '\nEmail: ' + email;
+    msg += '\n\nPlease let me know how to proceed.';
+
+    const url = 'https://wa.me/' + phone.replace(/\D/g, '') + '?text=' + encodeURIComponent(msg);
+    window.open(url, '_blank');
+  }
+
+  function toggleFaq(btn) {
+    const item = btn.parentElement;
+    item.classList.toggle('open');
+  }
+
+  // Close modal on overlay click
   document.getElementById('modal').addEventListener('click', function(e) {
     if (e.target === this) closeModal();
   });
