@@ -567,16 +567,7 @@
       email: fields.email,
       amount: 350000,
       currency: 'NGN',
-      custom_fields: [
-      {
-        display_name: "Affiliate Ref",
-        variable_name: "affiliate_ref",
-        value: localStorage.getItem('aff_ref') || 'direct'
-      }
-    ],
-        callback: function(response) { ... },
-    onClose: function() { ... }
-  });
+  
       metadata: { custom_fields: [{ display_name: 'Full Name', variable_name: 'full_name', value: fields.name }] },
       callback: function(response) {
         closeModal();
