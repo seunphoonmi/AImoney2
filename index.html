@@ -567,6 +567,14 @@
       email: fields.email,
       amount: 350000,
       currency: 'NGN',
+
+      custom_fields: [
+      {
+        display_name: "Affiliate Ref",
+        variable_name: "affiliate_ref",
+        value: localStorage.getItem('aff_ref') || 'direct'
+      }
+    ],
   
       metadata: { custom_fields: [{ display_name: 'Full Name', variable_name: 'full_name', value: fields.name }] },
       callback: function(response) {
@@ -595,7 +603,85 @@
     localStorage.setItem('aff_ref', ref.trim().toLowerCase());
   }
 })();
+// ---------------------------------------------------------------
+// AFFILIATE SYSTEM — AI Money Blueprint Nigeria
+// ---------------------------------------------------------------
 
+// ① On page load: detect ?ref= in URL and save it to localStorage
+(function () {
+  const params = new URLSearchParams(window.location.search);
+  const ref = params.get('ref');
+  if (ref) {
+    localStorage.setItem('aff_ref', ref.trim().toLowerCase());
+  }
+})();
+
+// ② Generate a unique ref code from name + whatsapp
+function generateAffLink() {
+  const nameInput = document.getElementById('aff-name');
+  const waInput   = document.getElementById('aff-whatsapp');
+  const errorEl   = document.getElementById('aff-error');
+
+  const name = nameInput.value.trim();
+  const wa   = waInput.value.replace(/\D/g, ''); // digits only
+
+  // Validation
+  errorEl.style.display = 'none';
+  if (!name || name.length < 2) {
+    errorEl.textContent = 'Please enter your full name.';
+    errorEl.style.display = 'block';
+    return;
+  }
+  if (wa.length < 10) {
+    errorEl.textContent = 'Please enter a valid WhatsApp number (at least 10 digits).';
+    errorEl.style.display = 'block';
+    return;
+  }
+
+  // Build ref code: firstname + last 4 digits of WhatsApp
+  const firstName = name.split(' ')[0].toLowerCase().replace(/[^a-z]/g, '');
+  const suffix    = wa.slice(-4);
+  const refCode   = firstName + suffix;
+
+  // Build the full affiliate URL
+  const affLink = 'https://sellitng.store/?ref=' + refCode;
+
+  // Store affiliate details in localStorage for their own session
+  localStorage.setItem('aff_name', name);
+  localStorage.setItem('aff_wa',   wa);
+  localStorage.setItem('aff_ref',  refCode);
+
+  // Show the link step
+  document.getElementById('aff-link-display').value = affLink;
+  document.getElementById('aff-form-step').style.display  = 'none';
+  document.getElementById('aff-link-step').style.display  = 'block';
+}
+
+// ③ Copy link to clipboard
+function copyAffLink() {
+  const linkInput = document.getElementById('aff-link-display');
+  linkInput.select();
+  linkInput.setSelectionRange(0, 99999); // mobile support
+  try {
+    navigator.clipboard.writeText(linkInput.value).then(function () {
+      const btn = document.getElementById('copy-btn');
+      btn.textContent = '✓ Copied!';
+      setTimeout(function () { btn.textContent = 'Copy Link'; }, 2500);
+    });
+  } catch (e) {
+    document.execCommand('copy');
+    document.getElementById('copy-btn').textContent = '✓ Copied!';
+    setTimeout(function () { document.getElementById('copy-btn').textContent = 'Copy Link'; }, 2500);
+  }
+}
+
+// ④ Reset the affiliate form
+function resetAffForm() {
+  document.getElementById('aff-name').value    = '';
+  document.getElementById('aff-whatsapp').value = '';
+  document.getElementById('aff-link-step').style.display = 'none';
+  document.getElementById('aff-form-step').style.display = 'block';
+}
 
 </script>
 </body>
